@@ -4,17 +4,19 @@ import json
 import os
 import requests
 import re
+import pprint
 from bs4 import BeautifulSoup
 
 url_base = "https://mods.factorio.com"
 
 def getModUrl(mod_name):
-    return url_base + "/?q=" + mod_name
+    return url_base + "/mods?q=" + mod_name
 
-def getOnlineVersion(mod_name):
+def getOnlineVersion(mod_name, author=None):
+    download = None #Download url also used to throw an err if no match is found
     url = getModUrl(mod_name)
     site = requests.get(url)
-    soup = BeautifulSoup(site.text, 'html.parser')
+    soup = BeautifulSoup(site.text, 'lxml')
     for data in soup.findAll('script'):
         json_str = data.string
         if not json_str:
@@ -26,9 +28,16 @@ def getOnlineVersion(mod_name):
         json_str = json_str.rstrip(";")
         # Transform to dict
         json_data = json.loads(json_str)
-        version = json_data["mods"]["modsPages"][0][0]["latest_release"]["info_json"]["version"]
-        download_url = json_data["mods"]["modsPages"][0][0]["latest_release"]["download_url"]
-        download = url_base + download_url
+        for mod in json_data["mods"]["modsPages"][0]:
+            tmp_author = mod["latest_release"]["info_json"]["author"]
+            tmp_modname = mod["latest_release"]["info_json"]["name"]
+            if author == tmp_author or mod_name == tmp_modname:
+                version = mod["latest_release"]["info_json"]["version"]
+                download_url = mod["latest_release"]["download_url"]
+                download = url_base + download_url
+        if not download:
+            pprint.pprint(json_data)
+            raise Exception("No match found")
         return (mod_name, version, download)
 
 def getMods(path):

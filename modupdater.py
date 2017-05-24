@@ -75,7 +75,10 @@ def main():
 
     for index in range(len(existing_mods)):
         if online_mods[index][1] != existing_mods[index][1]:
-            print("Newer version of \"{}\" is avaliable under {}\ninstalled: {}, current: {}".format(existing_mods[index][0], online_mods[index][2], existing_mods[index][1], online_mods[index][1]))
+            print("""Newer version of \"{}\" is avaliable under {}\ninstalled:{}, current: {}""".format(existing_mods[index][0],
+                                                                                                        online_mods[index][2],
+                                                                                                        existing_mods[index][1],
+                                                                                                        online_mods[index][1]))
             print()
 
 if __name__ == "__main__":

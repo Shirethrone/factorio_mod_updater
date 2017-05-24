@@ -49,14 +49,18 @@ def splitNameVersion(string):
 def main():
     try:
         if len(sys.argv) <= 1: # Parsing arguments
-            raise Exception("NotEnoughArguments")
+            raise Exception("Not Enough Arguments")
     except Exception as e:
         print("An Exception occured: {}".format(e))
         print("Usage:\n{} PATHTOMODS <USER> <PASSWORD>".format(sys.argv[0]))
         sys.exit()
 
-    if not os.path.exists(sys.argv[1]):
+    try:
+        if not os.path.exists(sys.argv[1]):
+            raise Exception("Path not valid")
+    except Exception as e:
         print("Error: {} does not exist".format(sys.argv[1]))
+        sys.exit()
         
 
     existing_mods = getMods(sys.argv[1])

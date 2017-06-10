@@ -8,6 +8,7 @@ import pprint
 from bs4 import BeautifulSoup
 
 url_base = "https://mods.factorio.com"
+file_name= "download.txt"
 
 def getModUrl(mod_name):
     return url_base + "/mods?q=" + mod_name
@@ -82,6 +83,7 @@ def main():
         print("Something is wrong!")
         sys.exit()
 
+    dl_mods = []
     for index in range(len(existing_mods)):
         if online_mods[index][1] != existing_mods[index][1]:
             print("""Newer version of \"{}\" is avaliable under {}\ninstalled:{}, current: {}""".format(existing_mods[index][0],
@@ -89,6 +91,11 @@ def main():
                                                                                                         existing_mods[index][1],
                                                                                                         online_mods[index][1]))
             print()
+            dl_mods.append(online_mods[index][2])
+
+    with open(file_name, 'w') as file:
+        for link in dl_mods:
+            file.write(link + '\n')
 
 if __name__ == "__main__":
     main()
